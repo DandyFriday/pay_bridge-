@@ -1,5 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { authRoutes } from './routes/auth.routes';
+import { AppError } from './utils/errors';
 
 export const app: Application = express();
 
@@ -16,6 +18,9 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
+// API Routes
+app.use('/api/v1/auth', authRoutes);
+
 // Centralized 404 Handler
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
@@ -26,6 +31,15 @@ app.use((_req: Request, res: Response) => {
 
 // Centralized Global Error Handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      status: 'error',
+      message: err.message,
+      ...(err.details !== undefined ? { details: err.details } : {}),
+    });
+    return;
+  }
+
   console.error('Unhandled Application Error:', err);
   res.status(500).json({
     status: 'error',
