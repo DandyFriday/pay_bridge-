@@ -5,6 +5,16 @@ import { hashApiKey, verifyJwt } from '../utils/crypto';
 import { AppError } from '../utils/errors';
 
 /**
+ * Returns the authenticated merchant ID attached by auth middleware or throws 401.
+ */
+export function getAuthenticatedMerchantId(req: Request): string {
+  if (!req.merchant) {
+    throw new AppError(401, 'Authentication required');
+  }
+  return req.merchant.id;
+}
+
+/**
  * Extracts a Bearer token from the Authorization header when present.
  */
 function extractBearerToken(req: Request): string | null {

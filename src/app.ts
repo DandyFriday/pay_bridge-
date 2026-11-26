@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { authRoutes } from './routes/auth.routes';
+import { ledgerRoutes } from './routes/ledger.routes';
 import { AppError } from './utils/errors';
 
 export const app: Application = express();
@@ -20,6 +21,7 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/ledger', ledgerRoutes);
 
 // Centralized 404 Handler
 app.use((_req: Request, res: Response) => {
